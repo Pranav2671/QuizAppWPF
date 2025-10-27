@@ -1,43 +1,99 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
+using Newtonsoft.Json;
+using QuizAppWPF.Models;
+
 
 namespace QuizAppWPF.Views
 {
-    /// <summary>
-    /// Interaction logic for LoginView.xaml
-    /// </summary>
     public partial class LoginView : Window
     {
+        private readonly HttpClient _httpClient;
+
         public LoginView()
         {
-            InitializeComponent(); // Cooonects XAML with code
+            InitializeComponent();
+
+            _httpClient = new HttpClient();
+            _httpClient.BaseAddress = new Uri("https://localhost:5001/"); // Your API URL
+            _httpClient.DefaultRequestHeaders.Accept.Add(
+                new MediaTypeWithQualityHeaderValue("application/json"));
         }
 
-        private void LoginButton_Click(object sender, RoutedEventArgs e)
+        private async void LoginButton_Click(object sender, RoutedEventArgs e)
         {
-            string username = UsernameTextBox.Text;
-            string password = PasswordBox.Password;
 
-            //very basic validation for now
-            if(username =="admin" && password == "1234")
+            string username = UsernameBox.Text.Trim();
+            string password = PasswordBox.Password.Trim();
+
+            if(string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
             {
-                MessageBox.Show("Login Successfull");
+                MessageBox.Show("Please fill both feilds.",
+                    "Validation Error",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Warning);
+                return;
             }
-            else
+
+            var loginData = new {Username = username, Password = password };
+
+            string json = JsonConvert.SerializeObject(loginData);
+
+            var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+            try
             {
-                MessageBox.Show("Invalid Credentials");
+                HttpResponseMessage response =
+                    await _httpClient.PostAsync("api/Users/login", content);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    string responseJson = await response.Content.ReadAsStringAsync();
+                    var loginResponse = JsonConvert.DeserializeObject<dynamic>(responseJson);
+
+                    MessageBox.Show("Login successfull!","Success",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Information);
+
+                    //Open dashboards based on role
+                    if (loginResponse.Role == "Admin")
+                    {
+                        AdminDashboard admin = new AdminDashboard();
+                        admin.Show();
+                    }
+                    else
+                    {
+                        UserDashboard user = new UserDashboard();
+                        user.Show();
+                    }
+                }
+                else
+                {
+                    string error = await response.Content.ReadAsStringAsync();
+                    MessageBox.Show("Login failed: " + error,
+                        "Error",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Error);
+                }
+
+
             }
+            catch(Exception ex)
+            {
+                MessageBox.Show("Error: " + ex.Message,
+                    "Connection Error",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error);
+            }
+        }
+
+        private void RegisterText_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            MessageBox.Show("Register page coming soon!");
         }
     }
 }
