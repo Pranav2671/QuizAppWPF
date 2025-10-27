@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using QuizAppWPF.Models;
 using QuizAppWPF.Services;
@@ -13,35 +12,36 @@ namespace QuizAppWPF.ViewModels
     {
         private readonly ApiService _apiService = new ApiService();
 
-        private ObservableCollection<Question> _questions = new();
-        private int _currentIndex;
+        private ObservableCollection<Question> _questions = new ObservableCollection<Question>();
+        private int _currentIndex = 0;
         private Question _currentQuestion;
 
         public ObservableCollection<Question> Questions
         {
-            get => _questions;
+            get { return _questions; }
             set
             {
                 _questions = value;
-                OnPropertyChanged();
+                OnPropertyChanged("Questions");
             }
         }
 
         public Question CurrentQuestion
         {
-            get => _currentQuestion;
+            get { return _currentQuestion; }
             set
             {
                 _currentQuestion = value;
-                OnPropertyChanged();
+                OnPropertyChanged("CurrentQuestion");
             }
         }
 
-        public event PropertyChangedEventHandler? PropertyChanged;
+        public event PropertyChangedEventHandler PropertyChanged;
 
-        private void OnPropertyChanged([CallerMemberName] string? name = null)
+        private void OnPropertyChanged(string propertyName)
         {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+            if (PropertyChanged != null)
+                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
         }
 
         public async Task LoadQuestionsAsync()

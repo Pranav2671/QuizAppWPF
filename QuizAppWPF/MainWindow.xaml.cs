@@ -1,28 +1,37 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+using QuizAppWPF.ViewModels;
 
 namespace QuizAppWPF
 {
-    /// <summary>
-    /// Interaction logic for MainWindow.xaml
-    /// </summary>
-    public partial class MainWindow : Window
+
+    public partial class MainWindow: Window
     {
+        private QuizViewModel _viewModel;
         public MainWindow()
         {
             InitializeComponent();
+
+            //Step 1 : Create the ViewModel
+            _viewModel = new QuizViewModel();
+
+            // Step 2: Connect ViewModel to UI (DataContext = brain of the UI)
+            DataContext = _viewModel;
+
+            // Step 3: Load data from API (run asynchronously)
+            Loaded += async (s, e) => await _viewModel.LoadQuestionsAsync();
+
         }
+
+        private void NextButton_Click(object sender, RoutedEventArgs e)
+        {
+            _viewModel.NextQuestion();
+        }
+
+        private void PreviousButton_Click(object sender, RoutedEventArgs e)
+        {
+            _viewModel.PreviousQuestion();
+        }
+
     }
 }
