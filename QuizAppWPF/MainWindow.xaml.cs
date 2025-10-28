@@ -8,12 +8,12 @@ namespace QuizAppWPF
     public partial class MainWindow: Window
     {
         private QuizViewModel _viewModel;
-        public MainWindow()
+        public MainWindow(QuizViewModel quizViewModel)
         {
             InitializeComponent();
 
             //Step 1 : Create the ViewModel
-            _viewModel = new QuizViewModel();
+            _viewModel = quizViewModel;
 
             // Step 2: Connect ViewModel to UI (DataContext = brain of the UI)
             DataContext = _viewModel;

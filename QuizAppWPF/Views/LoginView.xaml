@@ -72,7 +72,9 @@
                    Margin="0,15,0,0"
                    Foreground="#718093"
                    FontSize="13"
-                   Cursor="Hand"/>      
+                   Cursor="Hand"
+                   MouseDown="RegisterText_MouseDown"/>
+
 
             </StackPanel>
         </Border>

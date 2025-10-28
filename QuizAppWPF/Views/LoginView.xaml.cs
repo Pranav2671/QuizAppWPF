@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using Newtonsoft.Json;
 using QuizAppWPF.Models;
+using QuizAppWPF.Services;
 
 
 namespace QuizAppWPF.Views
@@ -13,16 +14,13 @@ namespace QuizAppWPF.Views
     public partial class LoginView : Window
     {
         private readonly HttpClient _httpClient;
+        private readonly IUserApi _userApi;
 
-        public LoginView()
-        {
+        public LoginView(IUserApi userApi){
             InitializeComponent();
-
-            _httpClient = new HttpClient();
-            _httpClient.BaseAddress = new Uri("https://localhost:5001/"); // Your API URL
-            _httpClient.DefaultRequestHeaders.Accept.Add(
-                new MediaTypeWithQualityHeaderValue("application/json"));
+            _userApi = userApi;
         }
+        
 
         private async void LoginButton_Click(object sender, RoutedEventArgs e)
         {
@@ -39,30 +37,31 @@ namespace QuizAppWPF.Views
                 return;
             }
 
-            var loginData = new {Username = username, Password = password };
+            var loginData = new User
+            {
+                Username = username,
+                Password = password
+            };
 
-            string json = JsonConvert.SerializeObject(loginData);
-
-            var content = new StringContent(json, Encoding.UTF8, "application/json");
+            
 
             try
             {
-                HttpResponseMessage response =
-                    await _httpClient.PostAsync("api/Users/login", content);
+                var response= await _userApi.LoginAsync(loginData);
+                //HttpResponseMessage response =
+                //    await _httpClient.PostAsync("api/Users/login", content);
 
-                if (response.IsSuccessStatusCode)
+                if (response.IsSuccessful)
                 {
-                    string responseJson = await response.Content.ReadAsStringAsync();
-                    var loginResponse = JsonConvert.DeserializeObject<dynamic>(responseJson);
-
+                    
                     MessageBox.Show("Login successfull!","Success",
                         MessageBoxButton.OK,
                         MessageBoxImage.Information);
 
                     //Open dashboards based on role
-                    if (loginResponse.Role == "Admin")
+                    if (response.Content.Role == "Admin")
                     {
-                        AdminDashboard admin = new AdminDashboard();
+                        AdminDashboard admin = new AdminDashboard(_userApi);
                         admin.Show();
                     }
                     else
@@ -73,8 +72,7 @@ namespace QuizAppWPF.Views
                 }
                 else
                 {
-                    string error = await response.Content.ReadAsStringAsync();
-                    MessageBox.Show("Login failed: " + error,
+                    MessageBox.Show("Login failed",
                         "Error",
                         MessageBoxButton.OK,
                         MessageBoxImage.Error);
@@ -93,7 +91,10 @@ namespace QuizAppWPF.Views
 
         private void RegisterText_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            MessageBox.Show("Register page coming soon!");
+            RegistrationView reg = new RegistrationView(_userApi);
+            reg.Show();
+            this.Close();
         }
+
     }
 }

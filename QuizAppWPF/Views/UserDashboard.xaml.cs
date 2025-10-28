@@ -24,11 +24,11 @@ namespace QuizAppWPF.Views
             InitializeComponent();
         }
 
-        private void Logout_Click(object sender, RoutedEventArgs e)
-        {
-            LoginView login = new LoginView();
-            login.Show();
-            this.Close();
-        }
+        //private void Logout_Click(object sender, RoutedEventArgs e)
+        //{
+        //    LoginView login = new LoginView();
+        //    login.Show();
+        //    this.Close();
+        //}
     }
 }

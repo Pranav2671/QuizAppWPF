@@ -10,7 +10,12 @@ namespace QuizAppWPF.ViewModels
 {
     public class QuizViewModel : INotifyPropertyChanged
     {
-        private readonly ApiService _apiService = new ApiService();
+        private readonly IUserApi _apiService;
+
+        public QuizViewModel(IUserApi userApi)
+        {
+            _apiService = userApi;
+        }
 
         private ObservableCollection<Question> _questions = new ObservableCollection<Question>();
         private int _currentIndex = 0;
@@ -46,10 +51,10 @@ namespace QuizAppWPF.ViewModels
 
         public async Task LoadQuestionsAsync()
         {
-            var questionsFromApi = await _apiService.GetQuestionsAsync();
-            Questions = new ObservableCollection<Question>(questionsFromApi);
-            if (Questions.Count > 0)
-                CurrentQuestion = Questions[0];
+            //var questionsFromApi = await _apiService.LoginAsync();
+            //Questions = new ObservableCollection<Question>(questionsFromApi);
+            //if (Questions.Count > 0)
+            //    CurrentQuestion = Questions[0];
         }
 
         public void NextQuestion()

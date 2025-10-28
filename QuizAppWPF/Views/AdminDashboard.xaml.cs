@@ -1,16 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using QuizAppWPF.Services;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace QuizAppWPF.Views
 {
@@ -19,9 +8,12 @@ namespace QuizAppWPF.Views
     /// </summary>
     public partial class AdminDashboard : Window
     {
-        public AdminDashboard()
+        private readonly IUserApi userApi;
+        public AdminDashboard(IUserApi user)
         {
             InitializeComponent();
+            userApi = user;
+           
         }
 
         //This method runs when the admin clicks the "Manage Users" button
@@ -30,7 +22,7 @@ namespace QuizAppWPF.Views
         {
 
             //Go back to login window
-            LoginView login = new LoginView();
+            LoginView login = new LoginView(userApi);
             login.Show();
             this.Close();
         }

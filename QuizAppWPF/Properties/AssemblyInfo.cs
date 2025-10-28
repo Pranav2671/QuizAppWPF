@@ -10,7 +10,7 @@ using System.Windows;
 [assembly: AssemblyTitle("QuizAppWPF")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("HP")]
+// [assembly: System.Reflection.AssemblyCompanyAttribute("QuizAppWPF")] // Remove or comment out this line if present
 [assembly: AssemblyProduct("QuizAppWPF")]
 [assembly: AssemblyCopyright("Copyright © HP 2025")]
 [assembly: AssemblyTrademark("")]
