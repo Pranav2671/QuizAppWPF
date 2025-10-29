@@ -7,27 +7,35 @@
         Background="#F5F6FA">
 
     <Grid>
+
+        <!-- Logout button at top-right -->
+        <Button Content="Logout"
+                Width="90"
+                Height="32"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Top"
+                Margin="0,10,10,0"
+                Click="LogoutButton_Click"
+                Background="#e84118"
+                Foreground="White"
+                FontWeight="Bold"
+                BorderThickness="0"
+                Cursor="Hand"/>
+
+        <!-- Center Content -->
         <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
 
-            <!-- Dashboard Title -->
             <TextBlock Text="👑 Admin Dashboard"
                        FontSize="28"
                        FontWeight="Bold"
                        HorizontalAlignment="Center"
                        Margin="0,0,0,20"/>
 
-            <!-- Admin Options -->
             <Button Content="Manage Users" Width="200" Height="40" Margin="0,5"/>
             <Button Content="Manage Quizzes" Width="200" Height="40" Margin="0,5"/>
             <Button Content="View Reports" Width="200" Height="40" Margin="0,5"/>
 
-            <!-- Logout Button -->
-            <Button Content="Logout"
-                    Width="200" Height="40"
-                    Margin="0,15,0,0"
-                    Background="#e84118"
-                    Foreground="White"
-                    Click="Logout_Click"/>
         </StackPanel>
+
     </Grid>
 </Window>

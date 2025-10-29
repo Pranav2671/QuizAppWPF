@@ -1,4 +1,5 @@
-﻿using System;
+﻿using QuizAppWPF.Services.Api;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -19,11 +20,22 @@ namespace QuizAppWPF.Views
     /// </summary>
     public partial class UserDashboard : Window
     {
-        public UserDashboard()
+        private readonly IUserApi _userApi;
+        public UserDashboard(IUserApi userApi)
         {
             InitializeComponent();
+            _userApi = userApi;
         }
 
+        private void LogoutButton_Click(object sender, RoutedEventArgs e)
+        {
+            // Recreate the LoginView
+            var loginView = new LoginView(_userApi);
+            loginView.Show();
+
+            // Close current dashboard
+            this.Close();
+        }
         //private void Logout_Click(object sender, RoutedEventArgs e)
         //{
         //    LoginView login = new LoginView();

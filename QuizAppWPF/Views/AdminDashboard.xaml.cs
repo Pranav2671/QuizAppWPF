@@ -1,4 +1,4 @@
-﻿using QuizAppWPF.Services;
+﻿using QuizAppWPF.Services.Api;
 using System.Windows;
 
 namespace QuizAppWPF.Views
@@ -18,12 +18,13 @@ namespace QuizAppWPF.Views
 
         //This method runs when the admin clicks the "Manage Users" button
 
-        private void Logout_Click(object sender, RoutedEventArgs e)
+        private void LogoutButton_Click(object sender, RoutedEventArgs e)
         {
+            // Recreate the LoginView
+            var loginView = new LoginView(userApi);
+            loginView.Show();
 
-            //Go back to login window
-            LoginView login = new LoginView(userApi);
-            login.Show();
+            // Close current dashboard
             this.Close();
         }
     }

@@ -4,6 +4,8 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Threading.Tasks;
 using QuizAppWPF.Models;
+using QuizAppWPF.Services.Api;
+
 using QuizAppWPF.Services;
 
 namespace QuizAppWPF.ViewModels

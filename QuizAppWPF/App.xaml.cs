@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using QuizAppWPF.Services;
+using QuizAppWPF.Services.Api;
 using QuizAppWPF.Views;
 using Refit;
 using System;

@@ -40,5 +40,15 @@ namespace QuizAPI.Controllers
 
             return Ok(new { user.Id, user.Username, user.Role });
         }
+
+
+        //GET: api/users
+
+        [HttpGet]
+        public async Task<IActionResult> GetUsers()
+        {
+            var users = await _context.Users.ToListAsync();
+                return Ok(users);
+        }
     }
 }
