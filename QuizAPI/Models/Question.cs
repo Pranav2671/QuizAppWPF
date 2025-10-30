@@ -1,10 +1,40 @@
-﻿namespace QuizAPI.Models
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace QuizAPI.Models
 {
     public class Question
     {
-        public int Id { get; set; }              // Database primary key
-        public string Text { get; set; } = "";   // The question itself
-        public List<string> Options { get; set; } = new(); // All possible answers
-        public int CorrectIndex { get; set; }    // Index of correct answer in Options
+        // Primary key
+        public int Id { get; set; }
+
+        // The question text
+        [Required]
+        [MaxLength(500)]
+        public string Text { get; set; }
+
+        // Four possible options
+        [Required]
+        public string OptionA { get; set; }
+
+        [Required]
+        public string OptionB { get; set; }
+
+        [Required]
+        public string OptionC { get; set; }
+
+        [Required]
+        public string OptionD { get; set; }
+
+        // The correct answer (e.g., "A", "B", "C", "D")
+        [Required]
+        [MaxLength(1)]
+        public string CorrectOption { get; set; }
+
+        // Foreign key to Topic (which this question belongs to)
+        public int TopicId { get; set; }
+
+        [ForeignKey("TopicId")]
+        public Topic Topic { get; set; }
     }
 }

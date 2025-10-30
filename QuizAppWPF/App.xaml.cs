@@ -35,7 +35,7 @@ namespace QuizAppWPF
         }
         private void ConfigureServices(IServiceCollection services)
         {
-            var ApiBaseUrl = "https://localhost:7024";
+            var ApiBaseUrl = "https://localhost:5001";
 
             services.AddRefitClient<IUserApi>()
                 .ConfigureHttpClient(c => c.BaseAddress = new Uri(ApiBaseUrl));

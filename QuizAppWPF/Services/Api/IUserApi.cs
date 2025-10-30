@@ -18,6 +18,6 @@ namespace QuizAppWPF.Services.Api
 
 
         [Delete("/api/users/{id}")]
-        Task DeleteUserAsync(int id);
+        Task<ApiResponse<string>> DeleteUserAsync(int id);
     }
 }

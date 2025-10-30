@@ -50,5 +50,18 @@ namespace QuizAPI.Controllers
             var users = await _context.Users.ToListAsync();
                 return Ok(users);
         }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteUser(int id)
+        {
+            var user = await _context.Users.FindAsync(id);
+            if (user == null)
+                return NotFound("User not found");
+
+            _context.Users.Remove(user);
+            await _context.SaveChangesAsync();
+            return Ok("User deleted successfully");
+        }
+
     }
 }

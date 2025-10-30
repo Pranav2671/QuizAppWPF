@@ -1,4 +1,5 @@
 ﻿using QuizAppWPF.Services.Api;
+using QuizAppWPF.Views.Admin;
 using System.Windows;
 
 namespace QuizAppWPF.Views
@@ -16,7 +17,7 @@ namespace QuizAppWPF.Views
            
         }
 
-        //This method runs when the admin clicks the "Manage Users" button
+        
 
         private void LogoutButton_Click(object sender, RoutedEventArgs e)
         {
@@ -27,5 +28,12 @@ namespace QuizAppWPF.Views
             // Close current dashboard
             this.Close();
         }
+
+        private void ManageUsers_Click(object sender, RoutedEventArgs e)
+        {
+            UserManagementView manageUsers = new UserManagementView();
+            manageUsers.ShowDialog();
+        }
+
     }
 }
