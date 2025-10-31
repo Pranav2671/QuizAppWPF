@@ -38,10 +38,13 @@ namespace QuizAppWPF.Views
 
         private async void ManageQuizzes_Click(object sender, RoutedEventArgs e)
         {
-            var topicApi = RestService.For<ITopicApi>("https://localhost:5001"); // your API base URL
-            var manageTopics = new ManageTopicsView(topicApi);
+            var topicApi = RestService.For<ITopicApi>("https://localhost:5001");
+            var questionApi = RestService.For<IQuestionApi>("https://localhost:5001");
+
+            var manageTopics = new ManageTopicsView(topicApi, questionApi);
             manageTopics.ShowDialog();
         }
+
 
 
 

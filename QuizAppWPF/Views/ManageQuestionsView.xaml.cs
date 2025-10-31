@@ -2,7 +2,6 @@
 using QuizAppWPF.Services.Api;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 
@@ -10,109 +9,66 @@ namespace QuizAppWPF.Views
 {
     public partial class ManageQuestionsView : Window
     {
-        private readonly ITopicApi _topicApi;
+        private readonly int _topicId;
+        private readonly string _topicName;
         private readonly IQuestionApi _questionApi;
+        private ITopicApi topicApi;
 
-        public ManageQuestionsView(ITopicApi topicApi, IQuestionApi questionApi)
+        public ManageQuestionsView(int topicId, string topicName, IQuestionApi questionApi)
         {
             InitializeComponent();
-            _topicApi = topicApi;
+            _topicId = topicId;
+            _topicName = topicName;
             _questionApi = questionApi;
-            LoadTopicsAsync();
+
+            TopicTitle.Text = $"Questions for: {_topicName}";
+            _ = LoadQuestionsAsync();
         }
 
-        // Load all topics into dropdown
-        private async void LoadTopicsAsync()
+        public ManageQuestionsView(int topicId, string topicName, IQuestionApi questionApi, ITopicApi topicApi) : this(topicId, topicName, questionApi)
+        {
+            this.topicApi = topicApi;
+        }
+
+        private async Task LoadQuestionsAsync()
         {
             try
             {
-                var topics = await _topicApi.GetTopicsAsync();
-                TopicComboBox.ItemsSource = topics;
-                TopicComboBox.DisplayMemberPath = "Name";
-                TopicComboBox.SelectedValuePath = "Id";
+                var questions = await _questionApi.GetQuestionsByTopicAsync(_topicId);
+                QuestionsList.ItemsSource = questions;
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Failed to load topics: " + ex.Message);
+                MessageBox.Show($"Error loading questions: {ex.Message}");
             }
         }
 
-        // Load questions when a topic is selected
-        private async void TopicComboBox_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
-        {
-            var selectedTopic = TopicComboBox.SelectedItem as Topic;
-            if (selectedTopic != null)
-            {
-                await LoadQuestionsAsync(selectedTopic.Id);
-            }
-        }
-
-        private async Task LoadQuestionsAsync(int topicId)
-        {
-            try
-            {
-                var questions = await _questionApi.GetQuestionsByTopicAsync(topicId);
-                QuestionsDataGrid.ItemsSource = questions;
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Failed to load questions: " + ex.Message);
-            }
-        }
-
-        // Add Question button
         private async void AddQuestion_Click(object sender, RoutedEventArgs e)
         {
-            var selectedTopic = TopicComboBox.SelectedItem as Topic;
-            if (selectedTopic == null)
-            {
-                MessageBox.Show("Please select a topic first.");
-                return;
-            }
-
-            var dialog = new AddQuestionDialog();
+            var dialog = new AddQuestionDialog(_topicId, _questionApi); // ✅ make sure dialog takes these params
             if (dialog.ShowDialog() == true)
             {
-                var newQuestion = dialog.NewQuestion;
-                newQuestion.TopicId = selectedTopic.Id;
-
-                try
-                {
-                    await _questionApi.AddQuestionAsync(newQuestion);
-                    MessageBox.Show("Question added successfully!");
-                    await LoadQuestionsAsync(selectedTopic.Id);
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show("Error adding question: " + ex.Message);
-                }
+                await LoadQuestionsAsync(); // refresh list after adding
             }
         }
 
-        // Delete selected question
         private async void DeleteQuestion_Click(object sender, RoutedEventArgs e)
         {
-            var selectedQuestion = QuestionsDataGrid.SelectedItem as Question;
-            if (selectedQuestion == null)
-            {
-                MessageBox.Show("Select a question to delete.");
+            var button = sender as FrameworkElement;
+            var question = button?.DataContext as Question;
+            if (question == null)
                 return;
-            }
 
-            if (MessageBox.Show($"Delete question '{selectedQuestion.Text}'?", "Confirm", MessageBoxButton.YesNo)
-                == MessageBoxResult.Yes)
+            if (MessageBox.Show($"Delete question: \"{question.Text}\"?", "Confirm", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
             {
                 try
                 {
-                    await _questionApi.DeleteQuestionAsync(selectedQuestion.Id);
-                    MessageBox.Show("Question deleted successfully!");
-                    var topic = TopicComboBox.SelectedItem as Topic;
-                    if (topic != null)
-                        await LoadQuestionsAsync(topic.Id);
+                    await _questionApi.DeleteQuestionAsync(question.Id);
+                    await LoadQuestionsAsync();
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show("Error deleting question: " + ex.Message);
+                    MessageBox.Show($"Error deleting question: {ex.Message}");
                 }
             }
         }

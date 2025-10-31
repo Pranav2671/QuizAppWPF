@@ -2,22 +2,28 @@
 using QuizAppWPF.Services.Api;
 using Refit;
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Windows;
 
-namespace QuizAppWPF.Views.Admin
+namespace QuizAppWPF.Views
 {
     public partial class ManageTopicsView : Window
     {
         private readonly ITopicApi _topicApi;
+        private readonly IQuestionApi _questionApi; // ✅ Added
 
-        public ManageTopicsView(ITopicApi topicApi)
+        public ManageTopicsView(ITopicApi topicApi, IQuestionApi questionApi)
         {
             InitializeComponent();
             _topicApi = topicApi;
-            _ = LoadTopicsAsync(); // load existing topics
+            _questionApi = questionApi;
+            _ = LoadTopicsAsync();
         }
+
+        //public ManageTopicsView(ITopicApi topicApi)
+        //{
+        //    _topicApi = topicApi;
+        //}
 
         private async Task LoadTopicsAsync()
         {
@@ -45,7 +51,6 @@ namespace QuizAppWPF.Views.Admin
             var newTopic = new Topic
             {
                 Name = topicName
-                // Don’t send CreatedAt — let the server handle it
             };
 
             try
@@ -56,7 +61,7 @@ namespace QuizAppWPF.Views.Admin
                 {
                     MessageBox.Show($"✅ Topic '{response.Content.Name}' added successfully!");
                     TopicNameBox.Clear();
-                    await LoadTopicsAsync(); // refresh
+                    await LoadTopicsAsync();
                 }
                 else
                 {
@@ -68,7 +73,6 @@ namespace QuizAppWPF.Views.Admin
                 MessageBox.Show($"Error adding topic: {ex.Message}");
             }
         }
-
 
         private async void DeleteTopic_Click(object sender, RoutedEventArgs e)
         {
@@ -92,7 +96,7 @@ namespace QuizAppWPF.Views.Admin
                     if (response.IsSuccessStatusCode)
                     {
                         MessageBox.Show("✅ Topic deleted successfully!");
-                        await LoadTopicsAsync(); // refresh after delete
+                        await LoadTopicsAsync();
                     }
                     else
                     {
@@ -105,5 +109,22 @@ namespace QuizAppWPF.Views.Admin
                 }
             }
         }
+
+        // ✅ When "View Questions" is clicked
+        private void ViewQuestions_Click(object sender, RoutedEventArgs e)
+        {
+            var selectedTopic = (sender as FrameworkElement)?.DataContext as Topic;
+            if (selectedTopic == null)
+            {
+                MessageBox.Show("Please select a topic first.");
+                return;
+            }
+
+            var questionApi = RestService.For<IQuestionApi>("https://localhost:5001");
+            var view = new ManageQuestionsView(selectedTopic.Id, selectedTopic.Name, questionApi, _topicApi);
+            view.ShowDialog();
+        }
+
+
     }
 }
