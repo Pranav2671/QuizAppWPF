@@ -1,5 +1,6 @@
 ﻿using QuizAppWPF.Services.Api;
 using QuizAppWPF.Views.Admin;
+using Refit;
 using System.Windows;
 
 namespace QuizAppWPF.Views
@@ -34,6 +35,15 @@ namespace QuizAppWPF.Views
             UserManagementView manageUsers = new UserManagementView();
             manageUsers.ShowDialog();
         }
+
+        private async void ManageQuizzes_Click(object sender, RoutedEventArgs e)
+        {
+            var topicApi = RestService.For<ITopicApi>("https://localhost:5001"); // your API base URL
+            var manageTopics = new ManageTopicsView(topicApi);
+            manageTopics.ShowDialog();
+        }
+
+
 
     }
 }

@@ -1,6 +1,7 @@
 ﻿using QuizAppWPF.Models;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace QuizAppWPF.Models
 {
@@ -13,6 +14,8 @@ namespace QuizAppWPF.Models
         public DateTime CreatedAt { get; set; }
 
         // We can include this if we’ll show or manage questions for each topic
+
+        [JsonIgnore]
         public List<Question> Questions { get; set; }
     }
 }

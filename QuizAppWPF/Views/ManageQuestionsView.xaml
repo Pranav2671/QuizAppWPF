@@ -1,0 +1,64 @@
+﻿<Window x:Class="QuizAppWPF.Views.ManageQuestionsView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Manage Questions"
+        Height="500" Width="800"
+        WindowStartupLocation="CenterScreen"
+        Background="#F5F6FA">
+
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Topic Selector and Add Button -->
+        <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+            <ComboBox x:Name="TopicComboBox"
+                      Width="250"
+                      Height="30"
+                      Margin="0,0,10,0"
+                      VerticalContentAlignment="Center"
+                      ToolTip="Select topic"/>
+            <Button Content="Add Question"
+                    Width="150"
+                    Height="30"
+                    Click="AddQuestion_Click"
+                    Background="#44bd32"
+                    Foreground="White"
+                    FontWeight="Bold"
+                    BorderThickness="0"
+                    Cursor="Hand"/>
+        </StackPanel>
+
+        <!-- Questions Table -->
+        <DataGrid x:Name="QuestionsDataGrid"
+                  Grid.Row="1"
+                  AutoGenerateColumns="False"
+                  CanUserAddRows="False"
+                  IsReadOnly="True"
+                  SelectionMode="Single"
+                  HeadersVisibility="Column">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="ID" Binding="{Binding Id}" Width="80"/>
+                <DataGridTextColumn Header="Text" Binding="{Binding Text}" Width="*"/>
+                <DataGridTextColumn Header="Correct" Binding="{Binding CorrectOption}" Width="100"/>
+            </DataGrid.Columns>
+        </DataGrid>
+
+        <!-- Delete Button -->
+        <Button Content="Delete Selected"
+                Grid.Row="2"
+                VerticalAlignment="Bottom"
+                Height="35"
+                Width="160"
+                HorizontalAlignment="Right"
+                Click="DeleteQuestion_Click"
+                Background="#e84118"
+                Foreground="White"
+                FontWeight="Bold"
+                BorderThickness="0"
+                Cursor="Hand"/>
+    </Grid>
+</Window>

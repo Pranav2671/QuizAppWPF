@@ -1,5 +1,6 @@
 ﻿using QuizAppWPF.Models;
 using QuizAppWPF.Services.Api;
+using Refit;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -15,10 +16,9 @@ namespace QuizAppWPF.Views.Admin
         {
             InitializeComponent();
             _topicApi = topicApi;
-            LoadTopicsAsync();
+            _ = LoadTopicsAsync(); // load existing topics
         }
 
-        // Load all topics
         private async Task LoadTopicsAsync()
         {
             try
@@ -32,24 +32,36 @@ namespace QuizAppWPF.Views.Admin
             }
         }
 
-        // Add topic
         private async void AddTopic_Click(object sender, RoutedEventArgs e)
         {
-            var name = TopicNameBox.Text.Trim();
+            string topicName = TopicNameBox.Text.Trim();
 
-            if (string.IsNullOrEmpty(name))
+            if (string.IsNullOrWhiteSpace(topicName))
             {
                 MessageBox.Show("Please enter a topic name.");
                 return;
             }
 
+            var newTopic = new Topic
+            {
+                Name = topicName
+                // Don’t send CreatedAt — let the server handle it
+            };
+
             try
             {
-                var newTopic = new Topic { Name = name };
-                await _topicApi.AddTopicAsync(newTopic); // we'll confirm the method name next
-                MessageBox.Show("Topic added successfully!");
-                await LoadTopicsAsync();
-                TopicNameBox.Clear();
+                var response = await _topicApi.AddTopicAsync(newTopic);
+
+                if (response.IsSuccessStatusCode && response.Content != null)
+                {
+                    MessageBox.Show($"✅ Topic '{response.Content.Name}' added successfully!");
+                    TopicNameBox.Clear();
+                    await LoadTopicsAsync(); // refresh
+                }
+                else
+                {
+                    MessageBox.Show($"❌ Failed to add topic. Status: {response.StatusCode}");
+                }
             }
             catch (Exception ex)
             {
@@ -57,23 +69,35 @@ namespace QuizAppWPF.Views.Admin
             }
         }
 
-        // Delete topic
+
         private async void DeleteTopic_Click(object sender, RoutedEventArgs e)
         {
             var selectedTopic = TopicsDataGrid.SelectedItem as Topic;
+
             if (selectedTopic == null)
             {
-                MessageBox.Show("Select a topic to delete.");
+                MessageBox.Show("Please select a topic to delete.");
                 return;
             }
 
-            if (MessageBox.Show($"Delete topic '{selectedTopic.Name}'?", "Confirm", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+            if (MessageBox.Show($"Are you sure you want to delete '{selectedTopic.Name}'?",
+                                "Confirm Delete",
+                                MessageBoxButton.YesNo,
+                                MessageBoxImage.Warning) == MessageBoxResult.Yes)
             {
                 try
                 {
-                    await _topicApi.DeleteTopicAsync(selectedTopic.Id);
-                    MessageBox.Show("Topic deleted successfully!");
-                    await LoadTopicsAsync();
+                    var response = await _topicApi.DeleteTopicAsync(selectedTopic.Id);
+
+                    if (response.IsSuccessStatusCode)
+                    {
+                        MessageBox.Show("✅ Topic deleted successfully!");
+                        await LoadTopicsAsync(); // refresh after delete
+                    }
+                    else
+                    {
+                        MessageBox.Show($"❌ Failed to delete topic. Status: {response.StatusCode}");
+                    }
                 }
                 catch (Exception ex)
                 {

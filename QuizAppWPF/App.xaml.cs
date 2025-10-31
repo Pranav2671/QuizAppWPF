@@ -40,6 +40,10 @@ namespace QuizAppWPF
             services.AddRefitClient<IUserApi>()
                 .ConfigureHttpClient(c => c.BaseAddress = new Uri(ApiBaseUrl));
 
+            services.AddRefitClient<ITopicApi>() // 👈 add this
+                .ConfigureHttpClient(c => c.BaseAddress = new Uri(ApiBaseUrl));
+
+
             services.AddSingleton<LoginView>();
 
         }

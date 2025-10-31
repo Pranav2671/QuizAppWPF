@@ -38,11 +38,19 @@ namespace QuizAPI.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateTopic(Topic topic)
         {
+            if (string.IsNullOrWhiteSpace(topic.Name))
+            {
+                return BadRequest("Topic name is required.");
+            }
+
+            topic.CreatedAt = DateTime.UtcNow;
+
             _context.Topics.Add(topic);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction(nameof(GetTopic), new { id = topic.Id }, topic);
+            return Ok(topic);
         }
+
 
         // ✅ PUT: api/Topics/{id}
         [HttpPut("{id}")]
