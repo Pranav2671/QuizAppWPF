@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace QuizAPI.Models
@@ -35,6 +36,7 @@ namespace QuizAPI.Models
         public int TopicId { get; set; }
 
         [ForeignKey("TopicId")]
+        [ValidateNever]
         public Topic Topic { get; set; }
     }
 }

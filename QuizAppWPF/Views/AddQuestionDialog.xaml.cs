@@ -40,12 +40,15 @@ namespace QuizAppWPF.Views
             var correct = CorrectAnswerBox.Text.Trim().ToUpper();
             if (correct != "A" && correct != "B" && correct != "C" && correct != "D")
             {
-                MessageBox.Show("Correct answer must be one of A, B, C or D.", "Validation Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show("Correct answer must be one of A, B, C, or D.", "Validation Error", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 
             try
             {
+                // ✅ Show topic being sent (for debugging)
+                MessageBox.Show($"Topic ID being sent: {_topicId}");
+
                 var newQuestion = new Question
                 {
                     Text = QuestionTextBox.Text.Trim(),
@@ -57,10 +60,21 @@ namespace QuizAppWPF.Views
                     TopicId = _topicId
                 };
 
-                // ✅ Directly call AddQuestionAsync (no status code check needed)
-                await _questionApi.AddQuestionAsync(newQuestion);
+                // ✅ Get full API response
+                var response = await _questionApi.AddQuestionAsync(newQuestion);
 
-                MessageBox.Show("Question added successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                if (!response.IsSuccessStatusCode)
+                {
+                    // API rejected the request
+                    MessageBox.Show(
+                        $"❌ Failed to add question\nStatus: {response.StatusCode}\nError: {response.Error?.Content}",
+                        "Error",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Error);
+                    return;
+                }
+
+                MessageBox.Show("✅ Question added successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
                 DialogResult = true;
                 Close();
             }
@@ -69,6 +83,7 @@ namespace QuizAppWPF.Views
                 MessageBox.Show("Error adding question: " + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
+
 
 
         private void Cancel_Click(object sender, RoutedEventArgs e)
