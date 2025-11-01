@@ -3,25 +3,55 @@ using System.Threading.Tasks;
 using System.Windows;
 using QuizAppWPF.Models;
 using QuizAppWPF.Services.Api;
+using Refit;
 
 namespace QuizAppWPF.Views
 {
     public partial class AddQuestionDialog : Window
     {
         private readonly int _topicId;
-        private readonly IQuestionApi _questionApi; // ✅ store API reference
+        private readonly IQuestionApi _questionApi;
+        private readonly bool _isEdit;
+        private readonly Question _existingQuestion;
 
         public Question NewQuestion { get; private set; }
 
-        public AddQuestionDialog(int topicId)
+        // Constructor for Add (existing usage)
+        public AddQuestionDialog(int topicId, IQuestionApi questionApi)
         {
             InitializeComponent();
             _topicId = topicId;
+            _questionApi = questionApi;
+            _isEdit = false;
         }
 
-        public AddQuestionDialog(int topicId, IQuestionApi questionApi) : this(topicId)
+        // Constructor for Edit: pass the question to edit
+        public AddQuestionDialog(Question questionToEdit, IQuestionApi questionApi)
         {
-            _questionApi = questionApi; // ✅ assign API
+            InitializeComponent();
+            if (questionToEdit == null) throw new ArgumentNullException(nameof(questionToEdit));
+
+            _existingQuestion = questionToEdit;
+            _topicId = questionToEdit.TopicId;
+            _questionApi = questionApi;
+            _isEdit = true;
+
+            PrefillFields();
+        }
+
+        // Prefill UI with existing question values
+        private void PrefillFields()
+        {
+            QuestionTextBox.Text = _existingQuestion.Text;
+            OptionABox.Text = _existingQuestion.OptionA;
+            OptionBBox.Text = _existingQuestion.OptionB;
+            OptionCBox.Text = _existingQuestion.OptionC;
+            OptionDBox.Text = _existingQuestion.OptionD;
+            CorrectAnswerBox.Text = _existingQuestion.CorrectOption;
+            // Optionally change window title or button text when editing
+            this.Title = "Edit Question";
+            // If your Add button has Content="Add", change it:
+            // AddButton.Content = "Save";
         }
 
         private async void Add_Click(object sender, RoutedEventArgs e)
@@ -40,51 +70,60 @@ namespace QuizAppWPF.Views
             var correct = CorrectAnswerBox.Text.Trim().ToUpper();
             if (correct != "A" && correct != "B" && correct != "C" && correct != "D")
             {
-                MessageBox.Show("Correct answer must be one of A, B, C, or D.", "Validation Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show("Correct answer must be one of A, B, C or D.", "Validation Error", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 
+            // Build the Question object to send
+            var questionToSend = new Question
+            {
+                Text = QuestionTextBox.Text.Trim(),
+                OptionA = OptionABox.Text.Trim(),
+                OptionB = OptionBBox.Text.Trim(),
+                OptionC = OptionCBox.Text.Trim(),
+                OptionD = OptionDBox.Text.Trim(),
+                CorrectOption = correct,
+                TopicId = _topicId
+            };
+
             try
             {
-                // ✅ Show topic being sent (for debugging)
-                MessageBox.Show($"Topic ID being sent: {_topicId}");
-
-                var newQuestion = new Question
+                if (_isEdit)
                 {
-                    Text = QuestionTextBox.Text.Trim(),
-                    OptionA = OptionABox.Text.Trim(),
-                    OptionB = OptionBBox.Text.Trim(),
-                    OptionC = OptionCBox.Text.Trim(),
-                    OptionD = OptionDBox.Text.Trim(),
-                    CorrectOption = correct,
-                    TopicId = _topicId
-                };
+                    // Use the existing question Id for updating
+                    questionToSend.Id = _existingQuestion.Id;
+                    var updateResponse = await _questionApi.UpdateQuestionAsync(questionToSend.Id, questionToSend);
 
-                // ✅ Get full API response
-                var response = await _questionApi.AddQuestionAsync(newQuestion);
+                    if (!updateResponse.IsSuccessStatusCode)
+                    {
+                        MessageBox.Show($"Failed to update question: {updateResponse.StatusCode}\n{updateResponse.Error?.Content}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                        return;
+                    }
 
-                if (!response.IsSuccessStatusCode)
-                {
-                    // API rejected the request
-                    MessageBox.Show(
-                        $"❌ Failed to add question\nStatus: {response.StatusCode}\nError: {response.Error?.Content}",
-                        "Error",
-                        MessageBoxButton.OK,
-                        MessageBoxImage.Error);
-                    return;
+                    MessageBox.Show("✅ Question updated successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                    DialogResult = true;
+                    Close();
                 }
+                else
+                {
+                    var addResponse = await _questionApi.AddQuestionAsync(questionToSend);
 
-                MessageBox.Show("✅ Question added successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
-                DialogResult = true;
-                Close();
+                    if (!addResponse.IsSuccessStatusCode)
+                    {
+                        MessageBox.Show($"Failed to add question: {addResponse.StatusCode}\n{addResponse.Error?.Content}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                        return;
+                    }
+
+                    MessageBox.Show("✅ Question added successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                    DialogResult = true;
+                    Close();
+                }
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error adding question: " + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show("Error calling API: " + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
-
-
 
         private void Cancel_Click(object sender, RoutedEventArgs e)
         {

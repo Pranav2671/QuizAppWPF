@@ -51,16 +51,28 @@
                                            FontWeight="Bold"
                                            Margin="0,8,0,0"/>
 
-                                <Button Content="Delete"
+                                <StackPanel Orientation="Horizontal"
+                                        HorizontalAlignment="Right"
+                                        Margin="0,5,0,0">
+                                   <Button Content="Edit"
                                         Width="100"
                                         Height="28"
-                                        HorizontalAlignment="Right"
-                                        Margin="0,5,0,0"
+                                        Margin="0,0,10,0"
+                                        Background="#44bd32"
+                                        Foreground="White"
+                                        BorderThickness="0"
+                                        Cursor="Hand"
+                                        Click="EditQuestion_Click"/>
+                                   <Button Content="Delete"
+                                        Width="100"
+                                        Height="28"
                                         Background="#e84118"
                                         Foreground="White"
                                         BorderThickness="0"
                                         Cursor="Hand"
-                                        Click="DeleteQuestion_Click"/>
+                                        Click="DeleteQuestion_Click"/>  
+                                </StackPanel>
+
                             </StackPanel>
                         </Border>
                     </DataTemplate>

@@ -52,6 +52,20 @@ namespace QuizAppWPF.Views
             }
         }
 
+        private async void EditQuestion_Click(object sender, RoutedEventArgs e)
+        {
+            var button = sender as FrameworkElement;
+            var question = button?.DataContext as Question;
+            if (question == null) return;
+
+            // Open dialog in edit mode
+            var dialog = new AddQuestionDialog(question, _questionApi);
+            if (dialog.ShowDialog() == true)
+            {
+                await LoadQuestionsAsync(); // refresh question list
+            }
+        }
+
         private async void DeleteQuestion_Click(object sender, RoutedEventArgs e)
         {
             var button = sender as FrameworkElement;

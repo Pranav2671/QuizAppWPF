@@ -19,6 +19,10 @@ namespace QuizAppWPF.Services.Api
         [Post("/api/Questions")]
         Task<ApiResponse<Question>> AddQuestionAsync([Body] Question question);
 
+        // Update an existing question
+        [Put("/api/Questions/{id}")]
+        Task<ApiResponse<Question>> UpdateQuestionAsync(int id, [Body] Question question);
+
         // Delete a question
         [Delete("/api/Questions/{id}")]
         Task<ApiResponse<string>> DeleteQuestionAsync(int id);
