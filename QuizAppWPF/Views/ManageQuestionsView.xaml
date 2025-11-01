@@ -13,18 +13,17 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <!-- ✅ Title (added missing TopicTitle) -->
-        <TextBlock x:Name="TopicTitle"
-                   Grid.Row="0"
-                   Text="Questions"
+        <!-- ✅ Title -->
+        <TextBlock Grid.Row="0"
+                   Text="{Binding TopicName, StringFormat='Questions for: {0}'}"
                    FontSize="22"
                    FontWeight="Bold"
                    Foreground="#2f3640"
                    Margin="0,0,0,15"/>
 
-        <!-- Questions list -->
+        <!-- ✅ Questions list -->
         <ScrollViewer Grid.Row="1">
-            <ItemsControl x:Name="QuestionsList" Margin="0,10,0,10">
+            <ItemsControl ItemsSource="{Binding Questions}" Margin="0,10,0,10">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
                         <Border BorderBrush="#dcdde1" BorderThickness="1" CornerRadius="8" Margin="0,0,0,10" Padding="10">
@@ -54,25 +53,26 @@
                                 <StackPanel Orientation="Horizontal"
                                         HorizontalAlignment="Right"
                                         Margin="0,5,0,0">
-                                   <Button Content="Edit"
-                                        Width="100"
-                                        Height="28"
-                                        Margin="0,0,10,0"
-                                        Background="#44bd32"
-                                        Foreground="White"
-                                        BorderThickness="0"
-                                        Cursor="Hand"
-                                        Click="EditQuestion_Click"/>
-                                   <Button Content="Delete"
-                                        Width="100"
-                                        Height="28"
-                                        Background="#e84118"
-                                        Foreground="White"
-                                        BorderThickness="0"
-                                        Cursor="Hand"
-                                        Click="DeleteQuestion_Click"/>  
+                                    <Button Content="Edit"
+                                           Width="100"
+                                           Height="28"
+                                           Margin="0,0,10,0"
+                                           Background="#44bd32"
+                                           Foreground="White"
+                                           BorderThickness="0"
+                                           Cursor="Hand"
+                                           Command="{Binding DataContext.EditQuestionCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                           CommandParameter="{Binding}"/>
+                                    <Button Content="Delete"
+                                           Width="100"
+                                           Height="28"
+                                           Background="#e84118"
+                                           Foreground="White"
+                                           BorderThickness="0"
+                                           Cursor="Hand"
+                                           Command="{Binding DataContext.DeleteQuestionCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                           CommandParameter="{Binding}"/>
                                 </StackPanel>
-
                             </StackPanel>
                         </Border>
                     </DataTemplate>
@@ -80,7 +80,7 @@
             </ItemsControl>
         </ScrollViewer>
 
-        <!-- Add Question Button -->
+        <!-- ✅ Add Question Button -->
         <Button Content="Add Question"
                 Grid.Row="2"
                 Width="140"
@@ -92,6 +92,6 @@
                 FontWeight="Bold"
                 Margin="0,10,0,0"
                 Cursor="Hand"
-                Click="AddQuestion_Click"/>
+                Command="{Binding AddQuestionCommand}"/>
     </Grid>
 </Window>

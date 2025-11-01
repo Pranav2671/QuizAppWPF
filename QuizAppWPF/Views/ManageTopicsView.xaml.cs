@@ -20,10 +20,10 @@ namespace QuizAppWPF.Views
             _ = LoadTopicsAsync();
         }
 
-        //public ManageTopicsView(ITopicApi topicApi)
-        //{
-        //    _topicApi = topicApi;
-        //}
+        public ManageTopicsView(ITopicApi topicApi)
+        {
+            _topicApi = topicApi;
+        }
 
         private async Task LoadTopicsAsync()
         {
@@ -120,10 +120,13 @@ namespace QuizAppWPF.Views
                 return;
             }
 
-            var questionApi = RestService.For<IQuestionApi>("https://localhost:5001");
-            var view = new ManageQuestionsView(selectedTopic.Id, selectedTopic.Name, questionApi, _topicApi);
-            view.ShowDialog();
+            // ✅ Reuse the already available _questionApi
+            var manageQuestionsView = new ManageQuestionsView(selectedTopic.Id, selectedTopic.Name, _questionApi);
+
+            manageQuestionsView.ShowDialog();
         }
+
+
 
 
     }
