@@ -8,7 +8,7 @@
 
     <Grid>
 
-        <!-- Logout button at top-right -->
+        <!-- Logout button -->
         <Button Content="Logout"
                 Width="90"
                 Height="32"
@@ -22,7 +22,7 @@
                 BorderThickness="0"
                 Cursor="Hand"/>
 
-        <!-- Center Content -->
+        <!-- Center content -->
         <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
 
             <TextBlock Text="👑 Admin Dashboard"
@@ -31,9 +31,27 @@
                        HorizontalAlignment="Center"
                        Margin="0,0,0,20"/>
 
-            <Button Content="Manage Users" Width="200" Height="40" Margin="0,5" Click="ManageUsers_Click"/>
-            <Button Content="Manage Quizzes"  Width="200" Height="40"  Margin="0,5" Click="ManageQuizzes_Click"/>
-            <Button Content="View Reports" Width="200" Height="40" Margin="0,5"/>
+            <Button Content="Manage Users"
+                    Width="200"
+                    Height="40"
+                    Margin="0,5"
+                    Click="ManageUsers_Click"/>
+
+            <Button Content="Manage Quiz Categories"
+                    Width="200"
+                    Height="40"
+                    Margin="0,5"
+                    Click="ManageCategories_Click"/>
+
+
+
+            <!-- ✅ Replaced View Reports with Add Quiz -->
+            <Button Content="View Quizzes"
+                    Width="200"
+                    Height="40"
+                    Margin="0,5"
+                    Click="ViewQuizzes_Click"/>
+
 
         </StackPanel>
 

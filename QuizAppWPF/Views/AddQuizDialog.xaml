@@ -1,0 +1,43 @@
+﻿<Window x:Class="QuizAppWPF.Views.AddQuizDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Add Quiz"
+        Height="200"
+        Width="350"
+        WindowStartupLocation="CenterOwner"
+        ResizeMode="NoResize"
+        Background="#F9F9F9">
+
+    <Grid Margin="20">
+        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+
+            <TextBlock Text="Select Topic for New Quiz"
+                       FontSize="18"
+                       FontWeight="Bold"
+                       Margin="0,0,0,15"
+                       TextAlignment="Center"/>
+
+            <ComboBox ItemsSource="{Binding Topics}"
+                      SelectedItem="{Binding SelectedTopic}"
+                      DisplayMemberPath="Name"
+                      Width="200"
+                      Margin="0,5,0,15"
+                      HorizontalAlignment="Center"/>
+
+
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,10,0,0">
+                <!-- ✅ Just use Click instead of Command -->
+                <Button Content="Create Quiz"
+                        Width="120"
+                        Margin="5"
+                        Click="CreateQuiz_Click" />
+
+                <Button Content="Cancel"
+                        Width="80"
+                        Margin="5"
+                        Click="Cancel_Click" />
+            </StackPanel>
+
+        </StackPanel>
+    </Grid>
+</Window>

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using QuizAPI.Data;
 
@@ -11,9 +12,11 @@ using QuizAPI.Data;
 namespace QuizAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251103104403_AddQuizTable")]
+    partial class AddQuizTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -86,8 +89,6 @@ namespace QuizAPI.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("TopicId");
-
                     b.ToTable("Quizzes");
                 });
 
@@ -141,17 +142,6 @@ namespace QuizAPI.Migrations
                 {
                     b.HasOne("QuizAPI.Models.Topic", "Topic")
                         .WithMany("Questions")
-                        .HasForeignKey("TopicId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Topic");
-                });
-
-            modelBuilder.Entity("QuizAPI.Models.Quiz", b =>
-                {
-                    b.HasOne("QuizAPI.Models.Topic", "Topic")
-                        .WithMany()
                         .HasForeignKey("TopicId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();

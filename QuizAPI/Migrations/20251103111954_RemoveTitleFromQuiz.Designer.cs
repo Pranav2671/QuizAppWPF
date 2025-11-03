@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using QuizAPI.Data;
 
@@ -11,9 +12,11 @@ using QuizAPI.Data;
 namespace QuizAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251103111954_RemoveTitleFromQuiz")]
+    partial class RemoveTitleFromQuiz
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,6 +24,24 @@ namespace QuizAPI.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+
+            modelBuilder.Entity("Quiz", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("TopicId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TopicId");
+
+                    b.ToTable("Quizzes");
+                });
 
             modelBuilder.Entity("QuizAPI.Models.Question", b =>
                 {
@@ -64,31 +85,6 @@ namespace QuizAPI.Migrations
                     b.HasIndex("TopicId");
 
                     b.ToTable("Questions");
-                });
-
-            modelBuilder.Entity("QuizAPI.Models.Quiz", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("QuestionCount")
-                        .HasColumnType("int");
-
-                    b.Property<int>("TopicId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("TopicTitle")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("TopicId");
-
-                    b.ToTable("Quizzes");
                 });
 
             modelBuilder.Entity("QuizAPI.Models.Topic", b =>
@@ -137,10 +133,10 @@ namespace QuizAPI.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("QuizAPI.Models.Question", b =>
+            modelBuilder.Entity("Quiz", b =>
                 {
                     b.HasOne("QuizAPI.Models.Topic", "Topic")
-                        .WithMany("Questions")
+                        .WithMany()
                         .HasForeignKey("TopicId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -148,10 +144,10 @@ namespace QuizAPI.Migrations
                     b.Navigation("Topic");
                 });
 
-            modelBuilder.Entity("QuizAPI.Models.Quiz", b =>
+            modelBuilder.Entity("QuizAPI.Models.Question", b =>
                 {
                     b.HasOne("QuizAPI.Models.Topic", "Topic")
-                        .WithMany()
+                        .WithMany("Questions")
                         .HasForeignKey("TopicId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();

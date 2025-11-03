@@ -22,6 +22,15 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+	  <Compile Remove="ViewModels\ManageQuizzesViewModel.cs" />
+	  <Compile Remove="Views\ManageQuizzesView.xaml.cs" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Page Remove="Views\ManageQuizzesView.xaml" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<!-- Required for calling APIs using interfaces -->
 		<PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="9.0.10" />
 		<PackageReference Include="Refit" Version="8.0.0" />

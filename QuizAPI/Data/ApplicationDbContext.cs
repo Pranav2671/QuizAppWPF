@@ -15,6 +15,9 @@ namespace QuizAPI.Data
         public DbSet<Topic> Topics { get; set; }
         public DbSet<Question> Questions { get; set; }
 
+        public DbSet<Quiz> Quizzes { get; set; }
+
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             //One-to-Many: Topic to Questions

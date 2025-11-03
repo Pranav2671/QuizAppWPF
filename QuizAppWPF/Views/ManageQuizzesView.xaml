@@ -1,0 +1,31 @@
+﻿<Window x:Class="QuizAppWPF.Views.ManageQuizzesView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Manage Quizzes" Height="450" Width="700"
+        Loaded="Window_Loaded">
+
+    <Grid Margin="10">
+        <StackPanel>
+            <!-- Top row -->
+            <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                <Button Content="Add Quiz"
+                        Width="120"
+                        Command="{Binding AddQuizCommand}" />
+            </StackPanel>
+
+            <!-- Display quizzes in a grid -->
+            <DataGrid ItemsSource="{Binding Quizzes}"
+                      AutoGenerateColumns="False"
+                      CanUserAddRows="False"
+                      IsReadOnly="True"
+                      Height="350">
+
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="ID" Binding="{Binding Id}" Width="60"/>
+                    <DataGridTextColumn Header="Topic" Binding="{Binding TopicTitle}" Width="200"/>
+                    <DataGridTextColumn Header="Questions" Binding="{Binding QuestionCount}" Width="120"/>
+                </DataGrid.Columns>
+            </DataGrid>
+        </StackPanel>
+    </Grid>
+</Window>
